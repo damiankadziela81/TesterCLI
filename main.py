@@ -1,31 +1,15 @@
 import typer
+from cli.greeting import app as greeting
+from cli.ping import app as ping
 
 # Run from terminal, use --help for more info
+# how to run after structure changes:
+# python main.py ping pang
+# python main.py greeting person
 
 app = typer.Typer()
-
-
-@app.command()
-def ping():
-    typer.echo("pong")
-
-
-# now to access 'greeting' specific help run 'python main.py greeting --help' in terminal
-@app.command()
-def greeting(
-        yell: bool = typer.Option(False, help="Yell", prompt="Yell?"),
-        greet: str = typer.Option("Hi", help="Greeting",prompt="Enter greeting"),
-        name: str = typer.Option("John Doe", help="Enter name for greetings", prompt="Enter name")
-):
-    """ Greeting program """
-    if yell:
-        typer.echo(typer.style(
-            f'{greet} {name} !!!',
-            fg=typer.colors.BRIGHT_WHITE,
-            bg=typer.colors.BRIGHT_RED
-        ))
-    else:
-        print(f'{greet} {name}')
+app.add_typer(greeting, name="greeting")
+app.add_typer(ping, name='ping')
 
 
 if __name__ == '__main__':
