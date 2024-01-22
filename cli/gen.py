@@ -1,30 +1,38 @@
 import typer
 import pyperclip
+from functools import wraps
 from faker import Faker
 
 app = typer.Typer()
 faker = Faker()
 
 
+def clipboard(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        typer.echo(result)
+        pyperclip.copy(result)
+        return result
+    return wrapper
+
+
 @app.command()
+@clipboard
 def first_name():
-    random_first_name = faker.first_name()
-    typer.echo(random_first_name)
-    pyperclip.copy(random_first_name)
+    return faker.first_name()
 
 
 @app.command()
+@clipboard
 def last_name():
-    random_last_name = faker.last_name()
-    typer.echo(random_last_name)
-    pyperclip.copy(random_last_name)
+    return faker.last_name()
 
 
 @app.command()
+@clipboard
 def name():
-    random_name = faker.name()
-    typer.echo(random_name)
-    pyperclip.copy(random_name)
+    return faker.name()
 
 
 if __name__ == '__main__':
