@@ -2,11 +2,21 @@ import typer
 
 # Run from terminal, use --help for more info
 
+app = typer.Typer()
 
-def print_hi(
-        yell: bool = typer.Option(False, help="Yell"),
-        greet: str = typer.Option("Hi", help="Greeting"),
-        name: str = typer.Option("John Doe", help="Enter name for greetings")):
+
+@app.command()
+def ping():
+    typer.echo("pong")
+
+
+# now to access 'greeting' specific help run 'python main.py greeting --help' in terminal
+@app.command()
+def greeting(
+        yell: bool = typer.Option(False, help="Yell", prompt="Yell?"),
+        greet: str = typer.Option("Hi", help="Greeting",prompt="Enter greeting"),
+        name: str = typer.Option("John Doe", help="Enter name for greetings", prompt="Enter name")
+):
     """ Greeting program """
     if yell:
         typer.echo(typer.style(
@@ -19,4 +29,4 @@ def print_hi(
 
 
 if __name__ == '__main__':
-    typer.run(print_hi)
+    app()
