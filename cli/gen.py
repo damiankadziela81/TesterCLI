@@ -1,7 +1,7 @@
 import typer
 import pyperclip
 import json
-from datetime import datetime
+from time import sleep
 from pprint import pprint
 from functools import wraps
 from faker import Faker
@@ -55,6 +55,30 @@ def person(
     if save:
         with open(filename, 'w') as json_file:
             json.dump(profile, json_file, indent=4)
+
+
+# This works as follows: when you run this with 'python main.py gen watcher'
+# and copy phrase '__gen__' followed by 'first_name'/'last_name'/'name' into your system clipboard
+# this function will substitute the contents of the clipboard with the generated names by faker
+@app.command()
+def watcher():
+    # it's important to move the '()' function execution to line 75 to get different name each time
+    generators = {'first_name': faker.first_name,
+                  'last_name': faker.last_name,
+                  'name': faker.name}
+    while True:
+        try:
+            clipboard_input = pyperclip.paste()
+            if clipboard_input.startswith('__gen__'):
+                clipboard_output = clipboard_input.replace('__gen__', '')
+                if clipboard_output in generators:
+                    clipboard_output = generators[clipboard_output]()
+                typer.echo(f"Replace '{clipboard_input}' with '{clipboard_output}'")
+                pyperclip.copy(clipboard_output)
+            sleep(1)
+        except KeyboardInterrupt:
+            # Use CTRL-C to break
+            break
 
 
 if __name__ == '__main__':
